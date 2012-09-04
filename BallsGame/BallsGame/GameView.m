@@ -100,7 +100,7 @@
    // [self createWalls];
     
     self.motionManager = [CMMotionManager new];
-    self.motionManager.deviceMotionUpdateInterval = .01;
+    self.motionManager.deviceMotionUpdateInterval = .02;
     //- (void)startDeviceMotionUpdatesToQueue:(NSOperationQueue *)queue withHandler:(CMDeviceMotionHandler)handler
     [self.motionManager startDeviceMotionUpdatesToQueue: [NSOperationQueue mainQueue] withHandler:^(CMDeviceMotion *motion, NSError *error) {
         if (!self.gameOver) {
@@ -118,7 +118,7 @@
         //[self startGame];
         
         //initialize the gamekit session
-        self.session = [[GKSession alloc] initWithSessionID:@"ABC" displayName:@"Ned" sessionMode:GKSessionModePeer];
+        self.session = [[GKSession alloc] initWithSessionID:@"ballchasegame" displayName:@"eddie" sessionMode:GKSessionModePeer];
         [self.session setDataReceiveHandler:self withContext:nil];
         self.session.delegate = self;
         self.session.available = YES;
@@ -194,7 +194,7 @@
     UIImage *opponentImage = [UIImage imageNamed:@"ms_pac_man.png"];
     //and a view with the image and add this as a subview
     self.opponentView = [[UIImageView alloc] initWithFrame:opponentRect];
-    self.ballView.image = opponentImage;
+    self.opponentView.image = opponentImage;
     [self addSubview:self.opponentView];
     
     //draw the lines
@@ -214,6 +214,7 @@
     if (DistanceBetweenTwoPoints(self.holeLoc, self.ballLoc) < 5) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Winner!" message:@"You put your ball in my hole!" delegate:self cancelButtonTitle:nil otherButtonTitles:@"Start Over", nil];
         [alert show];
+        [self sendWin];
         return YES;
     }
     return NO;
@@ -262,12 +263,16 @@ CGFloat DistanceFromPointToLine(CGPoint point, Line *line) {
     return collided;
 }
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+- (void)resetGame {
     for (UIView *view in self.subviews) {
         [view removeFromSuperview];
     }
-    //[self startGame];
+    [self startGame];
     [self setNeedsDisplay];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    [self resetGame];
 }
 
 //gamekit methods
@@ -288,8 +293,8 @@ CGFloat DistanceFromPointToLine(CGPoint point, Line *line) {
     } else if (state == GKPeerStateConnected) {
         //[self logToView:[NSString stringWithFormat:@"Connected to peer: %@\n", peerID]];
         //[self sendMessage:@"Hello peer!" toPeer:peerID];
-        [self startGame];
         [self sendLocation];
+        [self startGame];
         session.available = NO;
     }
 }
@@ -298,13 +303,25 @@ CGFloat DistanceFromPointToLine(CGPoint point, Line *line) {
 
     NSString* message = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     //save the decoded message
+    
+    if ([message isEqualToString:@"newgame"]) {
+        [self resetGame];
+    }
+    
+    NSLog(@"Opponent pos: %@",message);
     self.opponentLoc = CGPointFromString(message);
+}
+
+- (void)sendWin {
+    NSString* message = @"newgame";
+    NSData* payload = [message dataUsingEncoding:NSUTF8StringEncoding];
+    [self.session sendDataToAllPeers:payload withDataMode:GKSendDataReliable error:nil];
 }
 
 -(void)sendLocation {
     NSString* message = NSStringFromCGPoint(self.ballLoc);
     NSData* payload = [message dataUsingEncoding:NSUTF8StringEncoding];
-    [self.session sendDataToAllPeers:payload withDataMode:GKSendDataReliable error:nil];
+    [self.session sendDataToAllPeers:payload withDataMode:GKSendDataUnreliable error:nil];
     //now we sent them data! and they will call RECEIVE DATA method
 }
 
