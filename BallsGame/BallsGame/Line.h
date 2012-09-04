@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Line : NSObject
+@interface Line : NSObject <NSCoding>
 @property CGPoint start;
 @property CGPoint end;
 @end
