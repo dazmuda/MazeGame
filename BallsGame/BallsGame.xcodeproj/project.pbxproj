@@ -11,6 +11,8 @@
 		845C409E15F590F6004E7859 /* pacman.png in Resources */ = {isa = PBXBuildFile; fileRef = 845C409D15F590F6004E7859 /* pacman.png */; };
 		845C40A715F596DB004E7859 /* cherries.png in Resources */ = {isa = PBXBuildFile; fileRef = 845C40A615F596DB004E7859 /* cherries.png */; };
 		845C40A915F59A24004E7859 /* wallpaper.png in Resources */ = {isa = PBXBuildFile; fileRef = 845C40A815F59A24004E7859 /* wallpaper.png */; };
+		845C40B715F67D97004E7859 /* ms_pac_man.png in Resources */ = {isa = PBXBuildFile; fileRef = 845C40B615F67D97004E7859 /* ms_pac_man.png */; };
+		845C40B915F67E20004E7859 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 845C40B815F67E20004E7859 /* GameKit.framework */; };
 		84DB542F15F52E19005166AE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84DB542E15F52E19005166AE /* UIKit.framework */; };
 		84DB543115F52E19005166AE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84DB543015F52E19005166AE /* Foundation.framework */; };
 		84DB543315F52E19005166AE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84DB543215F52E19005166AE /* CoreGraphics.framework */; };
@@ -27,6 +29,8 @@
 		845C409D15F590F6004E7859 /* pacman.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pacman.png; sourceTree = "<group>"; };
 		845C40A615F596DB004E7859 /* cherries.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cherries.png; sourceTree = "<group>"; };
 		845C40A815F59A24004E7859 /* wallpaper.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wallpaper.png; sourceTree = "<group>"; };
+		845C40B615F67D97004E7859 /* ms_pac_man.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ms_pac_man.png; sourceTree = "<group>"; };
+		845C40B815F67E20004E7859 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		84DB542A15F52E19005166AE /* BallsGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BallsGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84DB542E15F52E19005166AE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		84DB543015F52E19005166AE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -47,6 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				845C40B915F67E20004E7859 /* GameKit.framework in Frameworks */,
 				84DB544615F52E4A005166AE /* CoreMotion.framework in Frameworks */,
 				84DB542F15F52E19005166AE /* UIKit.framework in Frameworks */,
 				84DB543115F52E19005166AE /* Foundation.framework in Frameworks */,
@@ -77,6 +82,7 @@
 		84DB542D15F52E19005166AE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				845C40B815F67E20004E7859 /* GameKit.framework */,
 				84DB544515F52E4A005166AE /* CoreMotion.framework */,
 				84DB542E15F52E19005166AE /* UIKit.framework */,
 				84DB543015F52E19005166AE /* Foundation.framework */,
@@ -90,6 +96,7 @@
 			children = (
 				845C409D15F590F6004E7859 /* pacman.png */,
 				845C40A615F596DB004E7859 /* cherries.png */,
+				845C40B615F67D97004E7859 /* ms_pac_man.png */,
 				845C40A815F59A24004E7859 /* wallpaper.png */,
 				84DB543D15F52E19005166AE /* AppDelegate.h */,
 				84DB543E15F52E19005166AE /* AppDelegate.m */,
@@ -168,6 +175,7 @@
 				845C409E15F590F6004E7859 /* pacman.png in Resources */,
 				845C40A715F596DB004E7859 /* cherries.png in Resources */,
 				845C40A915F59A24004E7859 /* wallpaper.png in Resources */,
+				845C40B715F67D97004E7859 /* ms_pac_man.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

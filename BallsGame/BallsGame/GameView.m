@@ -9,76 +9,119 @@
 #import "GameView.h"
 #import <CoreMotion/CoreMotion.h>
 #import "Line.h"
+#import <GameKit/GameKit.h>
 
-@interface GameView ()
+@interface GameView () <UIAlertViewDelegate, GKSessionDelegate>
 @property (strong, nonatomic) CMMotionManager* motionManager;
 @property (strong) NSMutableArray *lines;
 @property CGPoint ballLoc;
 @property CGPoint holeLoc;
-@property BOOL gameOver;
 @property CGRect holeRect;
 @property (strong) UIImageView *ballView;
 @property (strong) UIImageView *boxView;
+@property BOOL gameOver;
+@property (strong) GKSession* session;
+@property CGPoint opponentLoc;
+@property (strong) UIImageView *opponentView;
 @end
 
 @implementation GameView
+
+- (BOOL)pointInsideLine:(CGPoint)point withLine:(Line*)line {
+    if ( CGPointEqualToPoint(point, line.start) || CGPointEqualToPoint(point, line.end) )
+        return YES;
+    return NO;
+}
+
+- (void)createWalls {
+       for (int i = 0; i<15; ++i) {
+           Line *vLine = [Line new];
+           CGFloat x,y;
+    
+           //a do/while loop does the do loop first and then checks the conditions in the while loop
+           do {
+               //create a new line
+               //the 45s constrains the start point to a grid
+           retryVLine:
+               x = (CGFloat)(arc4random()%(int)(self.bounds.size.width/45))*45.0;
+               y = (CGFloat)(arc4random()%(int)(self.bounds.size.height/45))*45.0;
+    
+               vLine.start = CGPointMake(x, y);
+               vLine.end = CGPointMake(x+90.0, y);
+    
+               //iterate through all the lines
+               //check if this line's start and end is at the end of that line
+               for (Line *line in self.lines) {
+                   if ( [self pointInsideLine:vLine.start withLine:line] || [self pointInsideLine:vLine.end withLine:line] ) {
+                       goto retryVLine;
+                   }
+               }
+               //if this line intersects the ball or the hole DO IT AGAIN
+           } while (DistanceFromPointToLine(self.ballLoc, vLine) < 21 || DistanceFromPointToLine(self.holeLoc, vLine) < 21);
+           //if not, add it to the line array
+           [self.lines addObject:vLine];
+    
+           Line *hLine = [Line new];
+           do {
+           retryHLine:
+               x = (CGFloat)(arc4random()%(int)(self.bounds.size.width/45))*45.0;
+               y = (CGFloat)(arc4random()%(int)(self.bounds.size.height/45))*45.0;
+    
+               hLine.start = CGPointMake(x, y);
+               hLine.end = CGPointMake(x, y+90.0);
+    
+               for (Line *line in self.lines) {
+                   if ( [self pointInsideLine:hLine.start withLine:line] || [self pointInsideLine:hLine.end withLine:line]) {
+                       goto retryHLine;
+                   }
+               }
+    
+           } while (DistanceFromPointToLine(self.ballLoc, hLine) < 21 || DistanceFromPointToLine(self.holeLoc, hLine) < 21);
+           [self.lines addObject:hLine];
+       }
+
+}
+
+- (void)startGame {
+    self.gameOver = NO;
+    self.backgroundColor = [UIColor grayColor];
+    //        UIImage *bgImage = [UIImage imageNamed:@"wallpaper.png"];
+    //        self.backgroundColor = [UIColor colorWithPatternImage:bgImage];
+    self.ballLoc = CGPointMake(100, 100);
+    self.lines = [NSMutableArray new];
+    
+    //initializing the views
+    self.ballView = [UIImageView new];
+    self.boxView = [UIImageView new];
+    self.opponentView = [UIImageView new];
+    
+    self.holeRect = CGRectMake(self.bounds.size.width/2, self.bounds.size.height*.75, 40, 40);
+    self.holeLoc = CGPointMake(self.holeRect.origin.x + (self.holeRect.size.width/2), self.holeRect.origin.y + (self.holeRect.size.height/2));
+   // [self createWalls];
+    
+    self.motionManager = [CMMotionManager new];
+    self.motionManager.deviceMotionUpdateInterval = .01;
+    //- (void)startDeviceMotionUpdatesToQueue:(NSOperationQueue *)queue withHandler:(CMDeviceMotionHandler)handler
+    [self.motionManager startDeviceMotionUpdatesToQueue: [NSOperationQueue mainQueue] withHandler:^(CMDeviceMotion *motion, NSError *error) {
+        if (!self.gameOver) {
+            [self setBallPoint];
+            self.gameOver = [self checkInHole];
+            [self setNeedsDisplay];
+        }
+    }];
+}
 
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = [UIColor grayColor];
-//        UIImage *bgImage = [UIImage imageNamed:@"wallpaper.png"];
-//        self.backgroundColor = [UIColor colorWithPatternImage:bgImage];
-        self.ballLoc = CGPointMake(100, 100);
-        self.lines = [NSMutableArray new];
+        //[self startGame];
         
-        //initializing the views
-        self.ballView = [UIImageView new];
-        self.boxView = [UIImageView new];
-        
-        self.holeRect = CGRectMake(self.bounds.size.width/2, self.bounds.size.height*.75, 40, 40);
-        self.holeLoc = CGPointMake(self.holeRect.origin.x + (self.holeRect.size.width/2), self.holeRect.origin.y + (self.holeRect.size.height/2));
-        
-        for (int i = 0; i<4; ++i) {
-            Line *vLine = [Line new];
-            CGFloat x,y;
-            
-            //a do/while loop does the do loop first and then checks the conditions in the while loop
-            do {
-                //create a new line
-                x = (CGFloat)(arc4random()%(int)self.bounds.size.width);
-                y = (CGFloat)(arc4random()%(int)self.bounds.size.height);
-                vLine.start = CGPointMake(x, y);
-                vLine.end = CGPointMake(x+100, y);
-            //if this line intersects the ball or the hole DO IT AGAIN
-            } while (DistanceFromPointToLine(self.ballLoc, vLine) < 21 || DistanceFromPointToLine(self.holeLoc, vLine) < 21);
-            //if not, add it to the line array
-            [self.lines addObject:vLine];
-            
-            Line *hLine = [Line new];
-            do {
-                x = (CGFloat)(arc4random()%(int)self.bounds.size.width);
-                y = (CGFloat)(arc4random()%(int)self.bounds.size.height);
-                hLine.start = CGPointMake(x, y);
-                hLine.end = CGPointMake(x, y+100);
-            } while (DistanceFromPointToLine(self.ballLoc, hLine) < 21 || DistanceFromPointToLine(self.holeLoc, hLine) < 21);
-            [self.lines addObject:hLine];
-        }
-
-        
-        
-        self.motionManager = [CMMotionManager new];
-        self.motionManager.deviceMotionUpdateInterval = .01;
-        //- (void)startDeviceMotionUpdatesToQueue:(NSOperationQueue *)queue withHandler:(CMDeviceMotionHandler)handler
-        [self.motionManager startDeviceMotionUpdatesToQueue: [NSOperationQueue mainQueue] withHandler:^(CMDeviceMotion *motion, NSError *error) {
-            if (!self.gameOver) {
-                [self setBallPoint];
-                self.gameOver = [self checkInHole];
-                [self setNeedsDisplay];
-            }
-        }];
-    
+        //initialize the gamekit session
+        self.session = [[GKSession alloc] initWithSessionID:@"ABC" displayName:@"Ned" sessionMode:GKSessionModePeer];
+        [self.session setDataReceiveHandler:self withContext:nil];
+        self.session.delegate = self;
+        self.session.available = YES;
     }
     return self;
 }
@@ -104,6 +147,8 @@
     }
     
     self.ballLoc = CGPointMake(newX, newY);
+    [self sendLocation];
+    
 }
 
 - (void)drawRect:(CGRect)rect
@@ -142,7 +187,15 @@
     self.ballView = [[UIImageView alloc] initWithFrame:ballRect];
     self.ballView.image = ballImage;
     [self addSubview:self.ballView];
-
+    
+    //Draw opponent
+    [self.opponentView removeFromSuperview];
+    CGRect opponentRect = CGRectMake(self.opponentLoc.x-20, self.opponentLoc.y-20, 40, 40);
+    UIImage *opponentImage = [UIImage imageNamed:@"ms_pac_man.png"];
+    //and a view with the image and add this as a subview
+    self.opponentView = [[UIImageView alloc] initWithFrame:opponentRect];
+    self.ballView.image = opponentImage;
+    [self addSubview:self.opponentView];
     
     //draw the lines
     for (Line *line in self.lines) {
@@ -159,7 +212,7 @@
     //check if the ball intersects the box
     
     if (DistanceBetweenTwoPoints(self.holeLoc, self.ballLoc) < 5) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Winner!" message:@"You put your ball in my hole!" delegate:nil cancelButtonTitle:@"This does nothing" otherButtonTitles: nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Winner!" message:@"You put your ball in my hole!" delegate:self cancelButtonTitle:nil otherButtonTitles:@"Start Over", nil];
         [alert show];
         return YES;
     }
@@ -189,7 +242,6 @@ CGFloat DistanceFromPointToLine(CGPoint point, Line *line) {
     //Ax + By + C = 0
     //float distance = fabs(Am+Bn+C) / sqrt(A*A+B*B);
     // slope = -A/B
-
     
     BOOL collided = NO;
     
@@ -208,6 +260,52 @@ CGFloat DistanceFromPointToLine(CGPoint point, Line *line) {
     }
     
     return collided;
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    for (UIView *view in self.subviews) {
+        [view removeFromSuperview];
+    }
+    //[self startGame];
+    [self setNeedsDisplay];
+}
+
+//gamekit methods
+-(void)session:(GKSession*)session didReceiveConnectionRequestFromPeer:(NSString *)peerID {
+    [self.session acceptConnectionFromPeer:peerID error:nil];
+    session.available = NO;
+    
+    //[self logToView:[NSString stringWithFormat:@"Connecting client: %@\n", peerID]];
+    //[self sendMessage:@"Hello client!" toPeer:peerID];
+}
+
+-(void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state {
+
+    if (state == GKPeerStateAvailable) {
+        //[self logToView:[NSString stringWithFormat:@"Connecting to peer: %@\n", peerID]];
+        [session connectToPeer:peerID withTimeout:2];
+
+    } else if (state == GKPeerStateConnected) {
+        //[self logToView:[NSString stringWithFormat:@"Connected to peer: %@\n", peerID]];
+        //[self sendMessage:@"Hello peer!" toPeer:peerID];
+        [self startGame];
+        [self sendLocation];
+        session.available = NO;
+    }
+}
+
+-(void)receiveData:(NSData *)data fromPeer:(NSString *)peer inSession: (GKSession *)session context:(void *)context {
+
+    NSString* message = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    //save the decoded message
+    self.opponentLoc = CGPointFromString(message);
+}
+
+-(void)sendLocation {
+    NSString* message = NSStringFromCGPoint(self.ballLoc);
+    NSData* payload = [message dataUsingEncoding:NSUTF8StringEncoding];
+    [self.session sendDataToAllPeers:payload withDataMode:GKSendDataReliable error:nil];
+    //now we sent them data! and they will call RECEIVE DATA method
 }
 
 @end
