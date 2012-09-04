@@ -19,6 +19,8 @@
     [self.window addSubview: [[GameView alloc] initWithFrame: self.window.bounds]];
     
     self.window.backgroundColor = [UIColor whiteColor];
+    
+    [[UIApplication sharedApplication] setStatusBarHidden:YES];
     [self.window makeKeyAndVisible];
     return YES;
 }

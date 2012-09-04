@@ -1,5 +1,5 @@
 //
-//  GameView.h
+//  Walls.h
 //  BallsGame
 //
 //  Created by Diana Zmuda on 9/3/12.
@@ -7,11 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-@class CMMotionManager;
 
-@interface GameView : UIView
-
-
-
+@interface Walls : UIView
 
 @end

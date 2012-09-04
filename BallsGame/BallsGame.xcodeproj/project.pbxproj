@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		845C409C15F5705E004E7859 /* Line.m in Sources */ = {isa = PBXBuildFile; fileRef = 845C409B15F5705E004E7859 /* Line.m */; };
+		845C409E15F590F6004E7859 /* pacman.png in Resources */ = {isa = PBXBuildFile; fileRef = 845C409D15F590F6004E7859 /* pacman.png */; };
+		845C40A715F596DB004E7859 /* cherries.png in Resources */ = {isa = PBXBuildFile; fileRef = 845C40A615F596DB004E7859 /* cherries.png */; };
+		845C40A915F59A24004E7859 /* wallpaper.png in Resources */ = {isa = PBXBuildFile; fileRef = 845C40A815F59A24004E7859 /* wallpaper.png */; };
 		84DB542F15F52E19005166AE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84DB542E15F52E19005166AE /* UIKit.framework */; };
 		84DB543115F52E19005166AE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84DB543015F52E19005166AE /* Foundation.framework */; };
 		84DB543315F52E19005166AE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84DB543215F52E19005166AE /* CoreGraphics.framework */; };
@@ -18,6 +22,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		845C409A15F5705E004E7859 /* Line.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Line.h; sourceTree = "<group>"; };
+		845C409B15F5705E004E7859 /* Line.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Line.m; sourceTree = "<group>"; };
+		845C409D15F590F6004E7859 /* pacman.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pacman.png; sourceTree = "<group>"; };
+		845C40A615F596DB004E7859 /* cherries.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cherries.png; sourceTree = "<group>"; };
+		845C40A815F59A24004E7859 /* wallpaper.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wallpaper.png; sourceTree = "<group>"; };
 		84DB542A15F52E19005166AE /* BallsGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BallsGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84DB542E15F52E19005166AE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		84DB543015F52E19005166AE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -51,7 +60,6 @@
 		84DB541F15F52E19005166AE = {
 			isa = PBXGroup;
 			children = (
-				84DB544515F52E4A005166AE /* CoreMotion.framework */,
 				84DB543415F52E19005166AE /* BallsGame */,
 				84DB542D15F52E19005166AE /* Frameworks */,
 				84DB542B15F52E19005166AE /* Products */,
@@ -69,6 +77,7 @@
 		84DB542D15F52E19005166AE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				84DB544515F52E4A005166AE /* CoreMotion.framework */,
 				84DB542E15F52E19005166AE /* UIKit.framework */,
 				84DB543015F52E19005166AE /* Foundation.framework */,
 				84DB543215F52E19005166AE /* CoreGraphics.framework */,
@@ -79,10 +88,15 @@
 		84DB543415F52E19005166AE /* BallsGame */ = {
 			isa = PBXGroup;
 			children = (
+				845C409D15F590F6004E7859 /* pacman.png */,
+				845C40A615F596DB004E7859 /* cherries.png */,
+				845C40A815F59A24004E7859 /* wallpaper.png */,
 				84DB543D15F52E19005166AE /* AppDelegate.h */,
 				84DB543E15F52E19005166AE /* AppDelegate.m */,
 				84DB544A15F52E82005166AE /* GameView.h */,
 				84DB544B15F52E82005166AE /* GameView.m */,
+				845C409A15F5705E004E7859 /* Line.h */,
+				845C409B15F5705E004E7859 /* Line.m */,
 				84DB543515F52E19005166AE /* Supporting Files */,
 			);
 			path = BallsGame;
@@ -151,6 +165,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				84DB543915F52E19005166AE /* InfoPlist.strings in Resources */,
+				845C409E15F590F6004E7859 /* pacman.png in Resources */,
+				845C40A715F596DB004E7859 /* cherries.png in Resources */,
+				845C40A915F59A24004E7859 /* wallpaper.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -164,6 +181,7 @@
 				84DB543B15F52E19005166AE /* main.m in Sources */,
 				84DB543F15F52E19005166AE /* AppDelegate.m in Sources */,
 				84DB544C15F52E82005166AE /* GameView.m in Sources */,
+				845C409C15F5705E004E7859 /* Line.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,6 +293,7 @@
 				84DB544415F52E19005166AE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
