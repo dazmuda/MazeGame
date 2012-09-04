@@ -301,28 +301,41 @@ CGFloat DistanceFromPointToLine(CGPoint point, Line *line) {
 
 -(void)receiveData:(NSData *)data fromPeer:(NSString *)peer inSession: (GKSession *)session context:(void *)context {
 
-    NSString* message = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    //save the decoded message
+    NSDictionary *dic = [NSKeyedUnarchiver unarchiveObjectWithData:data];
     
-    if ([message isEqualToString:@"newgame"]) {
-        [self resetGame];
+    if ([dic objectForKey:@"message"]) {
+        if ([[dic objectForKey:@"message"] isEqualToString:@"newgame"]) {
+            [self resetGame];
+            return;
+        }
     }
     
-    NSLog(@"Opponent pos: %@",message);
-    self.opponentLoc = CGPointFromString(message);
+    if ([dic objectForKey:@"point"]) {
+        self.opponentLoc = CGPointFromString([dic objectForKey:@"point"]);
+    }
+    
+    if ([dic objectForKey:@"lines"]) {
+        self.lines = [dic objectForKey:@"lines"];
+    }
+    
 }
 
 - (void)sendWin {
-    NSString* message = @"newgame";
-    NSData* payload = [message dataUsingEncoding:NSUTF8StringEncoding];
-    [self.session sendDataToAllPeers:payload withDataMode:GKSendDataReliable error:nil];
+    [self sendObject:@"newgame" forKey:@"message"];
 }
 
 -(void)sendLocation {
     NSString* message = NSStringFromCGPoint(self.ballLoc);
-    NSData* payload = [message dataUsingEncoding:NSUTF8StringEncoding];
-    [self.session sendDataToAllPeers:payload withDataMode:GKSendDataUnreliable error:nil];
+    [self sendObject:message forKey:@"point"];
+
     //now we sent them data! and they will call RECEIVE DATA method
+}
+
+-(void)sendObject:(id)object forKey:(NSString*)key {
+    
+    NSDictionary *dic = [NSDictionary dictionaryWithObject:object forKey:key];
+    NSData *payload = [NSKeyedArchiver archivedDataWithRootObject:dic];
+    [self.session sendDataToAllPeers:payload withDataMode:GKSendDataUnreliable error:nil];
 }
 
 @end
