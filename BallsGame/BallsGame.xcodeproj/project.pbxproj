@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6485DB2515F7DED700AC86A2 /* skrillex-kill-everybody.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6485DB2415F7DED700AC86A2 /* skrillex-kill-everybody.mp3 */; };
+		6485DB2815F7DF0B00AC86A2 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6485DB2715F7DF0B00AC86A2 /* AVFoundation.framework */; };
 		845C409C15F5705E004E7859 /* Line.m in Sources */ = {isa = PBXBuildFile; fileRef = 845C409B15F5705E004E7859 /* Line.m */; };
 		845C409E15F590F6004E7859 /* pacman.png in Resources */ = {isa = PBXBuildFile; fileRef = 845C409D15F590F6004E7859 /* pacman.png */; };
 		845C40A715F596DB004E7859 /* cherries.png in Resources */ = {isa = PBXBuildFile; fileRef = 845C40A615F596DB004E7859 /* cherries.png */; };
@@ -24,6 +26,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6485DB2415F7DED700AC86A2 /* skrillex-kill-everybody.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "skrillex-kill-everybody.mp3"; sourceTree = "<group>"; };
+		6485DB2715F7DF0B00AC86A2 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		845C409A15F5705E004E7859 /* Line.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Line.h; sourceTree = "<group>"; };
 		845C409B15F5705E004E7859 /* Line.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Line.m; sourceTree = "<group>"; };
 		845C409D15F590F6004E7859 /* pacman.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pacman.png; sourceTree = "<group>"; };
@@ -51,6 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6485DB2815F7DF0B00AC86A2 /* AVFoundation.framework in Frameworks */,
 				845C40B915F67E20004E7859 /* GameKit.framework in Frameworks */,
 				84DB544615F52E4A005166AE /* CoreMotion.framework in Frameworks */,
 				84DB542F15F52E19005166AE /* UIKit.framework in Frameworks */,
@@ -65,6 +70,7 @@
 		84DB541F15F52E19005166AE = {
 			isa = PBXGroup;
 			children = (
+				6485DB2715F7DF0B00AC86A2 /* AVFoundation.framework */,
 				84DB543415F52E19005166AE /* BallsGame */,
 				84DB542D15F52E19005166AE /* Frameworks */,
 				84DB542B15F52E19005166AE /* Products */,
@@ -94,6 +100,7 @@
 		84DB543415F52E19005166AE /* BallsGame */ = {
 			isa = PBXGroup;
 			children = (
+				6485DB2415F7DED700AC86A2 /* skrillex-kill-everybody.mp3 */,
 				845C409D15F590F6004E7859 /* pacman.png */,
 				845C40A615F596DB004E7859 /* cherries.png */,
 				845C40B615F67D97004E7859 /* ms_pac_man.png */,
@@ -176,6 +183,7 @@
 				845C40A715F596DB004E7859 /* cherries.png in Resources */,
 				845C40A915F59A24004E7859 /* wallpaper.png in Resources */,
 				845C40B715F67D97004E7859 /* ms_pac_man.png in Resources */,
+				6485DB2515F7DED700AC86A2 /* skrillex-kill-everybody.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

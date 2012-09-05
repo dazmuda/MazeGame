@@ -285,15 +285,6 @@ CGFloat DistanceFromPointToLine(CGPoint point, Line *line) {
     [self sendLocation];
 }
 
-//gamekit methods
--(void)session:(GKSession*)session didReceiveConnectionRequestFromPeer:(NSString *)peerID {
-//    [self.session acceptConnectionFromPeer:peerID error:nil];
-//    session.available = NO;
-    
-    //[self logToView:[NSString stringWithFormat:@"Connecting client: %@\n", peerID]];
-    //[self sendMessage:@"Hello client!" toPeer:peerID];
-}
-
 -(void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state {
 
     if (state == GKPeerStateAvailable) {
@@ -315,9 +306,15 @@ CGFloat DistanceFromPointToLine(CGPoint point, Line *line) {
 
 - (void)peerPickerController:(GKPeerPickerController *)picker didConnectPeer:(NSString *)peerID toSession:(GKSession *)session {
     [session setDataReceiveHandler:self withContext:nil];
+    self.session = session;
+    self.session.delegate = self;
     
-    [self resetGame];
+    picker.delegate = nil;
+    [picker dismiss];
+    
+    
     if ([session.peerID intValue] > [peerID intValue]) {
+        [self resetGame];
         [self createWalls];
         [self sendObject:self.lines forKey:@"lines" forMode:GKSendDataReliable];
     }

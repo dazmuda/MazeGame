@@ -8,9 +8,14 @@
 
 #import "AppDelegate.h"
 #import "GameView.h"
+#import <AVFoundation/AVFoundation.h>
+
+@interface AppDelegate () <AVAudioPlayerDelegate>
+@property (strong) AVAudioPlayer *theAudio;
+@end
 
 @implementation AppDelegate
-
+@synthesize theAudio;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -40,11 +45,18 @@
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"music"];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"skrillex-kill-everybody" ofType:@"mp3"];
+    self.theAudio=[[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:path] error:NULL];
+    self.theAudio.delegate = self;
+    self.theAudio.numberOfLoops = -1;
+    [self.theAudio play];
+    [[NSUserDefaults standardUserDefaults] setObject:@"-" forKey:@"music"];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
