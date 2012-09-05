@@ -11,7 +11,7 @@
 #import "Line.h"
 #import <GameKit/GameKit.h>
 
-@interface GameView () <UIAlertViewDelegate, GKSessionDelegate>
+@interface GameView () <UIAlertViewDelegate, GKPeerPickerControllerDelegate, GKSessionDelegate>
 @property (strong, nonatomic) CMMotionManager* motionManager;
 @property (strong) NSMutableArray *lines;
 @property CGPoint ballLoc;
@@ -107,6 +107,8 @@
             [self setBallPoint];
             self.gameOver = [self checkInHole];
             [self setNeedsDisplay];
+        } else {
+            [self.motionManager stopDeviceMotionUpdates];
         }
     }];
 }
@@ -118,10 +120,15 @@
         //[self startGame];
         
         //initialize the gamekit session
-        self.session = [[GKSession alloc] initWithSessionID:@"ballchasegame" displayName:@"eddie" sessionMode:GKSessionModePeer];
-        [self.session setDataReceiveHandler:self withContext:nil];
-        self.session.delegate = self;
-        self.session.available = YES;
+//        self.session = [[GKSession alloc] initWithSessionID:@"ballchasegame" displayName:@"eddie" sessionMode:GKSessionModePeer];
+//        [self.session setDataReceiveHandler:self withContext:nil];
+//        self.session.delegate = self;
+//        self.session.available = YES;
+        
+        GKPeerPickerController *picker = [[GKPeerPickerController alloc] init];
+        picker.connectionTypesMask = GKPeerPickerConnectionTypeNearby;
+        picker.delegate = self;
+        [picker show];
     }
     return self;
 }
@@ -273,12 +280,15 @@ CGFloat DistanceFromPointToLine(CGPoint point, Line *line) {
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     [self resetGame];
+    [self createWalls];
+    [self sendObject:self.lines forKey:@"lines" forMode:GKSendDataReliable];
+    [self sendLocation];
 }
 
 //gamekit methods
 -(void)session:(GKSession*)session didReceiveConnectionRequestFromPeer:(NSString *)peerID {
-    [self.session acceptConnectionFromPeer:peerID error:nil];
-    session.available = NO;
+//    [self.session acceptConnectionFromPeer:peerID error:nil];
+//    session.available = NO;
     
     //[self logToView:[NSString stringWithFormat:@"Connecting client: %@\n", peerID]];
     //[self sendMessage:@"Hello client!" toPeer:peerID];
@@ -288,15 +298,31 @@ CGFloat DistanceFromPointToLine(CGPoint point, Line *line) {
 
     if (state == GKPeerStateAvailable) {
         //[self logToView:[NSString stringWithFormat:@"Connecting to peer: %@\n", peerID]];
-        [session connectToPeer:peerID withTimeout:2];
+//        [session connectToPeer:peerID withTimeout:10];
 
     } else if (state == GKPeerStateConnected) {
         //[self logToView:[NSString stringWithFormat:@"Connected to peer: %@\n", peerID]];
         //[self sendMessage:@"Hello peer!" toPeer:peerID];
-        [self sendLocation];
-        [self startGame];
-        session.available = NO;
+//        session.available = NO;
+//        [self resetGame];
+//        if ([session.peerID intValue] > [peerID intValue]) {
+//            [self createWalls];
+//            [self sendObject:self.lines forKey:@"lines" forMode:GKSendDataReliable];
+//        }
+//        [self sendLocation];
     }
+}
+
+- (void)peerPickerController:(GKPeerPickerController *)picker didConnectPeer:(NSString *)peerID toSession:(GKSession *)session {
+    [session setDataReceiveHandler:self withContext:nil];
+    
+    [self resetGame];
+    if ([session.peerID intValue] > [peerID intValue]) {
+        [self createWalls];
+        [self sendObject:self.lines forKey:@"lines" forMode:GKSendDataReliable];
+    }
+    [self sendLocation];
+    
 }
 
 -(void)receiveData:(NSData *)data fromPeer:(NSString *)peer inSession: (GKSession *)session context:(void *)context {
@@ -304,8 +330,9 @@ CGFloat DistanceFromPointToLine(CGPoint point, Line *line) {
     NSDictionary *dic = [NSKeyedUnarchiver unarchiveObjectWithData:data];
     
     if ([dic objectForKey:@"message"]) {
-        if ([[dic objectForKey:@"message"] isEqualToString:@"newgame"]) {
-            [self resetGame];
+        if ([[dic objectForKey:@"message"] isEqualToString:@"gameover"]) {
+            self.gameOver = YES;
+            [[[UIAlertView alloc] initWithTitle:@"You lost" message:@"Suck it" delegate:nil cancelButtonTitle:@"Do nothing" otherButtonTitles: nil] show];
             return;
         }
     }
@@ -315,27 +342,29 @@ CGFloat DistanceFromPointToLine(CGPoint point, Line *line) {
     }
     
     if ([dic objectForKey:@"lines"]) {
+        [self resetGame];
         self.lines = [dic objectForKey:@"lines"];
+        [self sendLocation];
     }
     
 }
 
 - (void)sendWin {
-    [self sendObject:@"newgame" forKey:@"message"];
+    [self sendObject:@"gameover" forKey:@"message" forMode:GKSendDataReliable];
 }
 
 -(void)sendLocation {
     NSString* message = NSStringFromCGPoint(self.ballLoc);
-    [self sendObject:message forKey:@"point"];
+    [self sendObject:message forKey:@"point" forMode:GKSendDataUnreliable];
 
     //now we sent them data! and they will call RECEIVE DATA method
 }
 
--(void)sendObject:(id)object forKey:(NSString*)key {
+-(void)sendObject:(id)object forKey:(NSString*)key forMode:(GKSendDataMode)mode {
     
     NSDictionary *dic = [NSDictionary dictionaryWithObject:object forKey:key];
     NSData *payload = [NSKeyedArchiver archivedDataWithRootObject:dic];
-    [self.session sendDataToAllPeers:payload withDataMode:GKSendDataUnreliable error:nil];
+    [self.session sendDataToAllPeers:payload withDataMode:mode error:nil];
 }
 
 @end
